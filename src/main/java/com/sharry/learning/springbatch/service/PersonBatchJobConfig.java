@@ -17,7 +17,7 @@ import com.sharry.learning.springbatch.domain.PersonDO;
 
 @Configuration
 @EnableBatchProcessing
-public class PersonJobConfig {
+public class PersonBatchJobConfig {
     
     @Autowired
     public JobBuilderFactory jobBuilderFactory;
@@ -27,25 +27,26 @@ public class PersonJobConfig {
     @Qualifier("hibernateItemWriter")
     private HibernateItemWriter<PersonDO> writer;
     
-    public ItemReader<PersonDO> reader(List<PersonDO> batchList) {
-        return new ListItemReader<PersonDO>(batchList);
-    }
     
-    public Job jobImportingBalance(List<PersonDO> personList) {
+    
+    public Job job(List<PersonDO> personList) {
         return jobBuilderFactory.get("jobImportingBalance")
             .incrementer(new RunIdIncrementer())
-            // .listener(listener)
-            .flow(stepImportingBalance(personList))
+            .flow(step(personList))
             .end()
             .build();
     }
     
-    public Step stepImportingBalance(List<PersonDO> personList) {
+    private Step step(List<PersonDO> personList) {
         return stepBuilderFactory.get("stepImportingBalance")
-            .<PersonDO, PersonDO> chunk(50)
+            .<PersonDO, PersonDO> chunk(100)
             .reader(reader(personList))
             .writer(writer)
             .build();
+    }
+    
+    private ItemReader<PersonDO> reader(List<PersonDO> batchList) {
+        return new ListItemReader<PersonDO>(batchList);
     }
 
 }

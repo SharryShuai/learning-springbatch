@@ -7,11 +7,18 @@
         http://www.springframework.org/schema/jdbc
         http://www.springframework.org/schema/jdbc/spring-jdbc-3.2.xsd">
         
-   <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+   <!-- <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
       <property name="driverClassName" value="com.mysql.jdbc.Driver" />
       <property name="url" value="jdbc:mysql://localhost:3306/springbatch" />
-      <property name="username" value="root" />
+      <property name="username" value="springbatch" />
       <property name="password" value="123456" />
+   </bean> -->
+   
+   <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+      <property name="driverClassName" value="net.sourceforge.jtds.jdbc.Driver" />
+      <property name="url" value="jdbc:jtds:sqlserver://DBDEVAW02.dev.activenetwork.com:1433/ledger_service;appName=LedgerService11" />
+      <property name="username" value="fnd_dev_usr" />
+      <property name="password" value="fnd_dev_usr$2008" />
    </bean>
    
    <bean id="sessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">  
@@ -23,16 +30,21 @@
         </property>
         <property name="hibernateProperties">
              <props>
-                <prop key="hibernate.dialect">org.hibernate.dialect.MySQLDialect</prop>
+                <prop key="hibernate.dialect">org.hibernate.dialect.SQLServer2008Dialect</prop>
                 <prop key="hibernate.hbm2ddl.auto">update</prop>
            	 </props>
         </property>
     </bean>
     
-   <bean id="transactionManager" class="org.springframework.batch.support.transaction.ResourcelessTransactionManager" />
-   
-   <jdbc:initialize-database data-source="dataSource">
+    <bean id="transactionManager" class="org.springframework.batch.support.transaction.ResourcelessTransactionManager" />
+    
+   <!-- <jdbc:initialize-database data-source="dataSource">
       <jdbc:script location="org/springframework/batch/core/schema-drop-mysql.sql" />
       <jdbc:script location="org/springframework/batch/core/schema-mysql.sql" />
+   </jdbc:initialize-database> -->
+   
+   <jdbc:initialize-database data-source="dataSource">
+      <jdbc:script location="job-schema/schema-drop-sqlserver.sql" />
+      <jdbc:script location="job-schema/schema-sqlserver.sql" />
    </jdbc:initialize-database>
 </beans>

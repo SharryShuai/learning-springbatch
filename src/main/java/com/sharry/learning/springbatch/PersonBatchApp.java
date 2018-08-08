@@ -10,7 +10,7 @@ import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-import com.sharry.learning.springbatch.service.PersonJobConfig;
+import com.sharry.learning.springbatch.service.PersonBatchJobConfig;
 import com.sharry.learning.springbatch.domain.PersonDO;
 
 public class PersonBatchApp {
@@ -20,24 +20,24 @@ public class PersonBatchApp {
     private static List<PersonDO> buildPersonDOList(int count) {
         List<PersonDO> personList = new ArrayList<>();
         for (int i = 0; i < count; i++) {
-            personList.add(buildPersonDO(new Long(i), "test"));
+            personList.add(buildPersonDO(System.currentTimeMillis() + i, "test"));
         }
         return personList;
     }
     
     private static PersonDO buildPersonDO(Long id, String name) {
-    	PersonDO p = new PersonDO();
-    	p.setId(id);
-    	p.setName(name);
-    	return p;
+        PersonDO p = new PersonDO();
+        p.setId(id);
+        p.setName(name);
+        return p;
     }
     
     @SuppressWarnings("resource")
     public static void main(String[] args) {        
         // Loading The Bean Definition From The Spring Configuration File
         ApplicationContext appContext = new ClassPathXmlApplicationContext("spring-batch-person.xml");
-        PersonJobConfig pjc = (PersonJobConfig) appContext.getBean("personJobConfig");
-        Job jobObj = pjc.jobImportingBalance(PersonBatchApp.buildPersonDOList(1000));
+        PersonBatchJobConfig pjc = (PersonBatchJobConfig) appContext.getBean("personBatchJobConfig");
+        Job jobObj = pjc.job(PersonBatchApp.buildPersonDOList(1000));
         JobLauncher jobLauncher = (JobLauncher) appContext.getBean("jobLauncher");
         Long startTimeInSec = System.currentTimeMillis();
         try {
