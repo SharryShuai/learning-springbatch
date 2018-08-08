@@ -9,7 +9,6 @@ import org.springframework.batch.core.configuration.annotation.StepBuilderFactor
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.database.HibernateItemWriter;
-import org.springframework.batch.item.support.ListItemReader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Configuration;
@@ -46,7 +45,7 @@ public class PersonBatchJobConfig {
     }
     
     private ItemReader<PersonDO> reader(List<PersonDO> batchList) {
-        return new ListItemReader<PersonDO>(batchList);
+        return new PersonItemReader(batchList);
     }
 
 }
