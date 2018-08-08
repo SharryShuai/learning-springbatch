@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:batch="http://www.springframework.org/schema/batch"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xsi:schemaLocation="http://www.springframework.org/schema/batch
+    http://www.springframework.org/schema/batch/spring-batch-3.0.xsd
+    http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
+    http://www.springframework.org/schema/context
+    http://www.springframework.org/schema/context/spring-context-4.3.xsd">
+   
+   
+   
+   <import resource="spring-context.xml" />
+   <import resource="spring-datasource.xml" />
+   
+   <!-- <batch:job id="importingPersonJob">
+      <batch:step id="stepImporting">
+         <batch:tasklet>
+            <batch:chunk reader="personItemReader" writer="personItemWriter" commit-interval="10" />
+         </batch:tasklet>
+      </batch:step>
+   </batch:job>
+   
+   
+   <bean id="personItemReader" class="com.sharry.learning.springbatch.service.PersonItemReader" />
+   <bean id="personItemWriter" class="com.sharry.learning.springbatch.service.PersonItemWriter" /> -->
+   <!-- <bean id="personJobConfig" class="com.sharry.learning.springbatch.service.PersonJobConfig" /> -->
+   <!-- <bean id="person" class="com.sharry.learning.springbatch.dto.Person" scope="prototype"/> -->
+   <bean id="hibernateItemWriter" class="org.springframework.batch.item.database.HibernateItemWriter">
+   		<property name="sessionFactory" ref="sessionFactory" />
+   </bean>
+   <context:component-scan base-package="com.sharry" />
+</beans>
