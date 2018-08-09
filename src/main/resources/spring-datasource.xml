@@ -43,8 +43,9 @@
       <jdbc:script location="org/springframework/batch/core/schema-mysql.sql" />
    </jdbc:initialize-database> -->
    
+   <!-- 
    <jdbc:initialize-database data-source="dataSource">
-      <jdbc:script location="job-schema/schema-drop-sqlserver.sql" />
-      <jdbc:script location="job-schema/schema-sqlserver.sql" />
-   </jdbc:initialize-database>
+      <jdbc:script location="job-schemas/schema-drop-sqlserver.sql" />
+      <jdbc:script location="job-schemas/schema-sqlserver.sql" />
+   </jdbc:initialize-database> -->
 </beans>

@@ -1,6 +1,8 @@
 package com.sharry.learning.springbatch.service;
 
 import java.util.List;
+import java.util.UUID;
+
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
@@ -29,7 +31,7 @@ public class PersonBatchJobConfig {
     
     
     public Job job(List<PersonDO> personList) {
-        return jobBuilderFactory.get("jobImportingBalance")
+        return jobBuilderFactory.get("jobImportingPersons")
             .incrementer(new RunIdIncrementer())
             .flow(step(personList))
             .end()
@@ -37,7 +39,7 @@ public class PersonBatchJobConfig {
     }
     
     private Step step(List<PersonDO> personList) {
-        return stepBuilderFactory.get("stepImportingBalance")
+        return stepBuilderFactory.get("stepImportingPersons-" + UUID.randomUUID().toString())
             .<PersonDO, PersonDO> chunk(100)
             .reader(reader(personList))
             .writer(writer)

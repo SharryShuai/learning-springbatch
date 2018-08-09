@@ -37,7 +37,7 @@ public class PersonBatchApp {
         // Loading The Bean Definition From The Spring Configuration File
         ApplicationContext appContext = new ClassPathXmlApplicationContext("spring-batch-person.xml");
         PersonBatchJobConfig pjc = (PersonBatchJobConfig) appContext.getBean("personBatchJobConfig");
-        Job jobObj = pjc.job(PersonBatchApp.buildPersonDOList(1000));
+        Job jobObj = pjc.job(PersonBatchApp.buildPersonDOList(100));
         JobLauncher jobLauncher = (JobLauncher) appContext.getBean("jobLauncher");
         Long startTimeInSec = System.currentTimeMillis();
         try {
