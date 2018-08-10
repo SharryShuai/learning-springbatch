@@ -11,9 +11,34 @@
     http://www.springframework.org/schema/context/spring-context-4.3.xsd">
    
    <import resource="spring-datasource.xml" />
+   
    <bean id="hibernateItemWriter" class="org.springframework.batch.item.database.HibernateItemWriter">
         <property name="sessionFactory" ref="sessionFactory" />
    </bean>
+   
+   <bean id="taskExecutor" class="org.springframework.core.task.SimpleAsyncTaskExecutor">
+        <property name="concurrencyLimit" value="10" />
+   </bean>
+   
+    <bean id="jobExplorer" class="org.springframework.batch.core.explore.support.JobExplorerFactoryBean">
+        <property name="dataSource" ref="dataSource" />
+    </bean>
+    
+    <bean id="jobLauncher" class="org.springframework.batch.core.launch.support.SimpleJobLauncher">
+        <property name="jobRepository" ref="jobRepository" />
+        <property name="taskExecutor" ref="taskExecutor" />
+    </bean>
+    <bean id="jobOperator" class="org.springframework.batch.core.launch.support.SimpleJobOperator">
+        <property name="jobExplorer" ref="jobExplorer" />
+        <property name="jobRepository" ref="jobRepository" />
+        <property name="jobRegistry" ref="jobRegistry" />
+        <property name="jobLauncher" ref="jobLauncher" />
+    </bean>
+    <bean id="jobRegistry" class="org.springframework.batch.core.configuration.support.MapJobRegistry" />
+    <!-- <bean id="jobRegistryBeanPostProcessor" class="org.springframework.batch.core.configuration.support.JobRegistryBeanPostProcessor">
+        <property name="jobRegistry" ref="jobRegistry" />
+    </bean> -->
+   
    <context:component-scan base-package="com.sharry" />
    
 </beans>

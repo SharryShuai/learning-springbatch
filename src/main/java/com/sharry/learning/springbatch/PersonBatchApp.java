@@ -17,7 +17,7 @@ public class PersonBatchApp {
     
     private static Logger logger = LoggerFactory.getLogger(PersonBatchApp.class);
     
-    private static List<PersonDO> buildPersonDOList(int count) {
+    public static List<PersonDO> buildPersonDOList(int count) {
         List<PersonDO> personList = new ArrayList<>();
         for (int i = 0; i < count; i++) {
             personList.add(buildPersonDO(System.currentTimeMillis() + i, "test"));
@@ -29,6 +29,7 @@ public class PersonBatchApp {
         PersonDO p = new PersonDO();
         p.setId(id);
         p.setName(name);
+//        p.setName(id % 2 == 0 ? null : name);
         return p;
     }
     
@@ -37,7 +38,7 @@ public class PersonBatchApp {
         // Loading The Bean Definition From The Spring Configuration File
         ApplicationContext appContext = new ClassPathXmlApplicationContext("spring-batch-person.xml");
         PersonBatchJobConfig pjc = (PersonBatchJobConfig) appContext.getBean("personBatchJobConfig");
-        Job jobObj = pjc.job(PersonBatchApp.buildPersonDOList(100));
+        Job jobObj = pjc.job(PersonBatchApp.buildPersonDOList(10));
         JobLauncher jobLauncher = (JobLauncher) appContext.getBean("jobLauncher");
         Long startTimeInSec = System.currentTimeMillis();
         try {

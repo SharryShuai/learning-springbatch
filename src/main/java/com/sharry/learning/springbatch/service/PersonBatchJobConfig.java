@@ -1,8 +1,6 @@
 package com.sharry.learning.springbatch.service;
 
 import java.util.List;
-import java.util.UUID;
-
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
@@ -14,6 +12,7 @@ import org.springframework.batch.item.database.HibernateItemWriter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.task.TaskExecutor;
 import com.sharry.learning.springbatch.domain.PersonDO;
 
 @Configuration
@@ -27,8 +26,8 @@ public class PersonBatchJobConfig {
     @Autowired
     @Qualifier("hibernateItemWriter")
     private HibernateItemWriter<PersonDO> writer;
-    
-    
+    @Autowired
+    private TaskExecutor taskExecutor;
     
     public Job job(List<PersonDO> personList) {
         return jobBuilderFactory.get("jobImportingPersons")
@@ -39,12 +38,17 @@ public class PersonBatchJobConfig {
     }
     
     private Step step(List<PersonDO> personList) {
-        return stepBuilderFactory.get("stepImportingPersons-" + UUID.randomUUID().toString())
+        return stepBuilderFactory.get("stepImportingPersons")//-" + UUID.randomUUID().toString())
             .<PersonDO, PersonDO> chunk(100)
             .reader(reader(personList))
             .writer(writer)
+            .taskExecutor(taskExecutor)
+            .throttleLimit(10)
+            .allowStartIfComplete(true)
+//            .exceptionHandler(exceptionHandler)
             .build();
     }
+    
     
     private ItemReader<PersonDO> reader(List<PersonDO> batchList) {
         return new PersonItemReader(batchList);
