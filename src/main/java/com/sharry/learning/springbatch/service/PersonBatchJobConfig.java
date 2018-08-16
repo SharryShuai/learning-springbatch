@@ -33,9 +33,10 @@ public class PersonBatchJobConfig {
     @Autowired
     private TaskExecutor taskExecutor;
     
-    public Job job(List<PersonDO> personList) {
+    public Job job(String batchNumber, List<PersonDO> personList) {
         return jobBuilderFactory.get("jobImportingPersons")
             .incrementer(new RunIdIncrementer())
+            .listener(listener(batchNumber))
             .flow(step(personList))
             .end()
             .build();
@@ -58,6 +59,11 @@ public class PersonBatchJobConfig {
         return new PersonItemReader(batchList);
     }
 
+    private PersonBatchJobExecutionListener listener(String batchNumber) {
+        PersonBatchJobExecutionListener listener = new PersonBatchJobExecutionListener(batchNumber);
+        return listener;
+    }
+    
     @Bean
     public JobRepository jobRepository(ResourcelessTransactionManager transactionManager) throws Exception {
         MapJobRepositoryFactoryBean mapJobRepositoryFactoryBean = new MapJobRepositoryFactoryBean(transactionManager);
