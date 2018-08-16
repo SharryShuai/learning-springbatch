@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.batch.core.BatchStatus;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobParameters;
@@ -28,8 +29,8 @@ public class PersonBatchApp {
     private static PersonDO buildPersonDO(Long id, String name) {
         PersonDO p = new PersonDO();
         p.setId(id);
-        p.setName(name);
-//        p.setName(id % 2 == 0 ? null : name);
+         p.setName(name);
+        // p.setName(id % 2 == 0 ? null : name);
         return p;
     }
     
@@ -38,15 +39,23 @@ public class PersonBatchApp {
         // Loading The Bean Definition From The Spring Configuration File
         ApplicationContext appContext = new ClassPathXmlApplicationContext("spring-batch-person.xml");
         PersonBatchJobConfig pjc = (PersonBatchJobConfig) appContext.getBean("personBatchJobConfig");
-        Job jobObj = pjc.job(PersonBatchApp.buildPersonDOList(10));
+        Job jobObj = pjc.job(PersonBatchApp.buildPersonDOList(20));
         JobLauncher jobLauncher = (JobLauncher) appContext.getBean("jobLauncher");
         Long startTimeInSec = System.currentTimeMillis();
+        BatchStatus execStatus = null;
         try {
             JobExecution execution = jobLauncher.run(jobObj, new JobParameters());
-            logger.debug("Batch exit status={}", execution.getStatus());
+            execStatus = execution.getStatus();
+            logger.debug("Batch exit status={}", execStatus);
         } catch (Exception e) {
             logger.error("Batch failed", e);
         }
+        
+        if (execStatus != BatchStatus.COMPLETED) {
+            logger.error("Batch rollback!!!!!!!!!!!!!!!");
+        }
+        
+        
         Long endTimeInSec = System.currentTimeMillis();
         logger.debug("Batch finished. Cost time(ms):{}", endTimeInSec - startTimeInSec);
     }

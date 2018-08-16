@@ -7,10 +7,14 @@ import org.springframework.batch.core.configuration.annotation.EnableBatchProces
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
+import org.springframework.batch.core.repository.JobRepository;
+import org.springframework.batch.core.repository.support.MapJobRepositoryFactoryBean;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.database.HibernateItemWriter;
+import org.springframework.batch.support.transaction.ResourcelessTransactionManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.task.TaskExecutor;
 import com.sharry.learning.springbatch.domain.PersonDO;
@@ -54,4 +58,10 @@ public class PersonBatchJobConfig {
         return new PersonItemReader(batchList);
     }
 
+    @Bean
+    public JobRepository jobRepository(ResourcelessTransactionManager transactionManager) throws Exception {
+        MapJobRepositoryFactoryBean mapJobRepositoryFactoryBean = new MapJobRepositoryFactoryBean(transactionManager);
+        mapJobRepositoryFactoryBean.setTransactionManager(transactionManager);
+        return mapJobRepositoryFactoryBean.getObject();
+    }
 }
